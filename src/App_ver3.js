@@ -107,7 +107,7 @@ function App() {
         } else if (isClickedIcon.current) {
           // This part handles resizing by dragging the icon
           const newWidth = e.clientX - box.getBoundingClientRect().left;
-          const newHeight = e.clientY - box.getBoundingClientRect().top;
+          const newHeight = newWidth / (box.clientWidth / box.clientHeight);
 
           if (newWidth > 0 && newHeight > 0) {
             box.style.width = `${newWidth}px`;
