@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import ImageUploadArea from "./ImageUploadArea";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* <div className="app"> */}
+      <div className="divParent">
+        <ImageUploadArea />
+      </div>
+      <label for="input-file">Update Image</label>
+      {/* </div> */}
+    </>
   );
 }
 
 export default App;
+//
+//I am using react and I have one div, which has a background image. Inside of this div, I have child image file and two images looks stack or overlap, which means the child image is on the background image from the parent . What I want to do is to extract both image to one image, as it looks on the browser.
+
+//-This is a code currently.
