@@ -67,19 +67,22 @@ main {
   position:absolute;
   top:0;
   left:0;
-  background-color: hotpink;
   width:140px;
   height:140px;
-  cursor:pointer;
+  cursor:move;
+  
 }
 .icon {
   width: 10px;
   height:10px;
-  background-color: black;
+  background-color: none;
+  border: 3px solid black;
   position:absolute;
-  top:135px;
-  left:135px;
+  top:130px;
+  left:130px;
   border-radius: 10px;
+  cursor: nw-resize;
+  
 }
 .center-lines {
   position: absolute;
@@ -92,21 +95,22 @@ main {
 
 .center-line {
   position: absolute;
-  background-color: red;
+  background-color: black;
   z-index: 100;
 }
 
 .vertical {
-  top: -3%;
-  left: 48%;
+  top: 0%;
+  left: 50%;
   width: 1px;
   height: 100%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); 
+  background-color: black;
 }
 
 .horizontal {
   top: 50%;
-  left: -3%;
+  left: 0%;
   width: 100%;
   height: 1px;
   transform: translateY(-50%);
