@@ -37,8 +37,11 @@ function App() {
         box.style.width = "100px"; // Set your desired width
         box.style.height = `${100 / aspectRatio}px`; // Adjust the height based on the aspect ratio
 
-        icon.style.left = `${100 - 10}px`;
-        icon.style.top = `${100 / aspectRatio - 10}px`; // Adjust the height based on the aspect ratio
+        // icon.style.left = `${100 - 10}px`;
+        // icon.style.top = `${100 / aspectRatio - 10}px`; // Adjust the height based on the aspect ratio
+        // Set the initial position for the icon in the bottom right corner of the box
+        icon.style.left = `${box.clientWidth - 10}px`;
+        icon.style.top = `${box.clientHeight - 10}px`;
       };
     };
 
@@ -95,7 +98,6 @@ function App() {
           // Check if the box is close enough to the center
           const isNearCenterX = distanceToCenterX <= centerThreshold;
           const isNearCenterY = distanceToCenterY <= centerThreshold;
-          console.log(containerWidth / 2 - boxWidth / 2);
           if (isNearCenterX && isNearCenterY) {
             // Snap to the center
             box.style.left = `${containerWidth / 2 - boxWidth / 2}px`;
@@ -128,7 +130,7 @@ function App() {
               icon.style.left = `${nextX + boxWidth - 10}px`;
             } else if (nextX >= 0 && nextX + boxWidth > containerWidth) {
               box.style.left = `${containerWidth - boxWidth}px`;
-              icon.style.left = `${nextX + boxWidth - 10}px`;
+              icon.style.left = `${containerWidth - 10}px`;
             } else {
               box.style.left = `${0}px`;
             }
@@ -137,7 +139,7 @@ function App() {
               icon.style.top = `${nextY + boxHeight - 10}px`;
             } else if (nextY >= 0 && nextY + boxHeight > containerHeight) {
               box.style.top = `${containerHeight - boxHeight}px`;
-              icon.style.top = `${nextY + boxHeight - 10}px`;
+              icon.style.top = `${containerHeight - 10}px`;
             } else {
               box.style.top = `${0}px`;
             }
@@ -227,17 +229,6 @@ function App() {
           box.clientHeight
         );
       };
-
-      //   // Now the canvas contains the merged image of the container background and the uploaded image
-      //   // You can display it or convert it to a downloadable image
-
-      //   // Create a new image element and set its source to the canvas data URL
-      // const mergedImage = new Image();
-      // mergedImage.src = mergedCanvas.toDataURL("image/png");
-
-      // Append the image to the page for display
-      // document.body.appendChild(mergedImage);
-      // };
     };
   };
 
@@ -245,16 +236,107 @@ function App() {
     const container = document.querySelector(".container");
     const box = document.querySelector(".box"); // Calculate the new position for the box
     const newLeft = container.clientWidth / 2 - box.clientWidth / 2;
-    const newTop = container.clientHeight / 2 - box.clientHeight / 2;
     const icon = iconRef.current;
+
+    // Set the new position for the box
+    box.style.left = `${newLeft}px`;
+    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    setCenteredX(true);
+  };
+
+  const handleClickLeft = () => {
+    const container = document.querySelector(".container");
+    const box = document.querySelector(".box");
+    const icon = iconRef.current;
+
+    // Calculate the new position for the box and icon
+    const newLeft = 0;
+    const newTop = box.offsetTop;
 
     // Set the new position for the box
     box.style.left = `${newLeft}px`;
     box.style.top = `${newTop}px`;
 
-    // // Set the position for the icon in the bottom right corner of the box
+    // Set the position for the icon in the bottom right corner of the box
+    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    icon.style.top = `${newTop + box.clientHeight - 10}px`; // Update centered state
+    setCenteredX(false);
+  };
+
+  const handleClickRight = () => {
+    const container = document.querySelector(".container");
+    const box = document.querySelector(".box");
+    const icon = iconRef.current;
+
+    // Calculate the new position for the box and icon
+    const newLeft = container.clientWidth - box.clientWidth;
+    const newTop = box.offsetTop;
+
+    // Set the new position for the box
+    box.style.left = `${newLeft}px`;
+    box.style.top = `${newTop}px`;
+
+    // Set the position for the icon in the bottom right corner of the box
+    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    icon.style.top = `${newTop + box.clientHeight - 10}px`; // Update centered state
+    setCenteredX(false);
+  };
+
+  const handleClickTop = () => {
+    const container = document.querySelector(".container");
+    const box = document.querySelector(".box");
+    const icon = iconRef.current;
+
+    // Calculate the new position for the box and icon
+    const newLeft = box.offsetLeft;
+    const newTop = 0;
+
+    // Set the new position for the box
+    box.style.left = `${newLeft}px`;
+    box.style.top = `${newTop}px`;
+
+    // Set the position for the icon in the bottom right corner of the box
     icon.style.left = `${newLeft + box.clientWidth - 10}px`;
     icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    setCenteredY(false);
+  };
+
+  const handleClickMiddle = () => {
+    const container = document.querySelector(".container");
+    const box = document.querySelector(".box");
+    const icon = iconRef.current;
+
+    // Calculate the new position for the box and icon
+    const newLeft = container.clientWidth / 2 - box.clientWidth / 2;
+    const newTop = container.clientHeight / 2 - box.clientHeight / 2;
+
+    // Set the new position for the box
+    // box.style.left = `${newLeft}px`;
+    box.style.top = `${newTop}px`;
+
+    // Set the position for the icon in the bottom right corner of the box
+    // icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    setCenteredY(true);
+  };
+
+  const handleClickBottom = () => {
+    const container = document.querySelector(".container");
+    const box = document.querySelector(".box");
+    const icon = iconRef.current;
+
+    // Calculate the new position for the box and icon
+    const newLeft = box.offsetLeft;
+    const newTop = container.clientHeight - box.clientHeight;
+
+    // Set the new position for the box
+    box.style.left = `${newLeft}px`;
+    box.style.top = `${newTop}px`;
+
+    // Set the position for the icon in the bottom right corner of the box
+    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    setCenteredY(false);
   };
 
   return (
@@ -282,11 +364,11 @@ function App() {
       </div>
       <div>
         <button onClick={handleClickCenter}>Center</button>
-        <button>Left</button>
-        <button>Right</button>
-        <button>Top</button>
-        <button>Middle</button>
-        <button>Bottom</button>
+        <button onClick={handleClickLeft}>Left</button>
+        <button onClick={handleClickRight}>Right</button>
+        <button onClick={handleClickTop}>Top</button>
+        <button onClick={handleClickMiddle}>Middle</button>
+        <button onClick={handleClickBottom}>Bottom</button>
       </div>
       <input type="file" onChange={handleImageUpload} accept="image/*" />
       <button

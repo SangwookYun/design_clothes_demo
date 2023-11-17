@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import "./App.css";
 import ImageUploadArea from "./ImageUploadArea";
-
+import PracRef from "./component/PracRef.js";
+import App_ver3 from "./component/App_ver3.js";
 function App() {
   return (
     <>
-      {/* <div className="app"> */}
-      <div className="divParent">
-        <ImageUploadArea />
-      </div>
-      <label for="input-file">Update Image</label>
-      {/* </div> */}
+      <div> TEST</div>
+      <PracRef height={30} />
+      <PracRef height={50} />
+      <App_ver3 />
+      <App_ver3 />
     </>
   );
 }
