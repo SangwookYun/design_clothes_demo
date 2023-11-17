@@ -40,8 +40,8 @@ function App() {
         // icon.style.left = `${100 - 10}px`;
         // icon.style.top = `${100 / aspectRatio - 10}px`; // Adjust the height based on the aspect ratio
         // Set the initial position for the icon in the bottom right corner of the box
-        icon.style.left = `${box.clientWidth - 10}px`;
-        icon.style.top = `${box.clientHeight - 10}px`;
+        icon.style.left = `${box.clientWidth - 12}px`;
+        icon.style.top = `${box.clientHeight - 12}px`;
       };
     };
 
@@ -65,6 +65,8 @@ function App() {
     };
     console.log(centeredX);
     const onMouseUp = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       console.log("OnMouseUp");
       isClicked.current = false;
       coords.current.lastX = box.offsetLeft;
@@ -84,8 +86,10 @@ function App() {
           const containerHeight = container.clientHeight;
           const boxWidth = box.clientWidth;
           const boxHeight = box.clientHeight;
+          const iconHeight = icon.clientHeight;
+          const iconWidth = icon.clientWidth;
 
-          const centerThreshold = 2; // Adjust this value based on your preference
+          const centerThreshold = 1; // Adjust this value based on your preference
 
           // Calculate the distance from the current box position to the center
           const distanceToCenterX = Math.abs(
@@ -103,23 +107,24 @@ function App() {
             box.style.left = `${containerWidth / 2 - boxWidth / 2}px`;
             box.style.top = `${containerHeight / 2 - boxHeight / 2}px`;
             icon.style.left = `${
-              containerWidth / 2 - boxWidth / 2 + boxWidth - 10
+              containerWidth / 2 - boxWidth / 2 + boxWidth - iconWidth - 3
             }px`;
             icon.style.top = `${
-              containerHeight / 2 - boxHeight / 2 + boxHeight - 10
+              containerHeight / 2 - boxHeight / 2 + boxHeight - iconHeight - 3
             }px`;
+
             setCenteredX(true);
             setCenteredY(true);
           } else if (isNearCenterX) {
             box.style.left = `${containerWidth / 2 - boxWidth / 2}px`;
             icon.style.left = `${
-              containerWidth / 2 - boxWidth / 2 + boxWidth - 10
+              containerWidth / 2 - boxWidth / 2 + boxWidth - iconWidth - 3
             }px`;
             setCenteredX(true);
           } else if (isNearCenterY) {
             box.style.top = `${containerHeight / 2 - boxHeight / 2}px`;
             icon.style.top = `${
-              containerHeight / 2 - boxHeight / 2 + boxHeight - 10
+              containerHeight / 2 - boxHeight / 2 + boxHeight - iconHeight - 3
             }px`;
             setCenteredY(true);
           } else {
@@ -127,36 +132,45 @@ function App() {
             setCenteredX(false);
             if (nextX >= 0 && nextX + boxWidth <= containerWidth) {
               box.style.left = `${nextX}px`;
-              icon.style.left = `${nextX + boxWidth - 10}px`;
+              icon.style.left = `${nextX + boxWidth - iconWidth - 3}px`;
             } else if (nextX >= 0 && nextX + boxWidth > containerWidth) {
               box.style.left = `${containerWidth - boxWidth}px`;
-              icon.style.left = `${containerWidth - 10}px`;
+              icon.style.left = `${containerHeight - iconHeight - 3}px`;
             } else {
               box.style.left = `${0}px`;
+              icon.style.left = `${boxWidth - iconWidth - 3}px`;
             }
             if (nextY >= 0 && nextY + boxHeight <= containerHeight) {
               box.style.top = `${nextY}px`;
-              icon.style.top = `${nextY + boxHeight - 10}px`;
+              icon.style.top = `${nextY + boxHeight - iconHeight - 3}px`;
             } else if (nextY >= 0 && nextY + boxHeight > containerHeight) {
               box.style.top = `${containerHeight - boxHeight}px`;
-              icon.style.top = `${containerHeight - 10}px`;
+              icon.style.top = `${containerHeight - iconHeight - 3}px`;
             } else {
               box.style.top = `${0}px`;
+              icon.style.top = `${boxHeight - iconHeight - 3}px`;
             }
           }
         } else if (isClickedIcon.current) {
           // This part handles resizing by dragging the icon
-          const newWidth = e.clientX - box.getBoundingClientRect().left;
-          const newHeight = newWidth / (box.clientWidth / box.clientHeight);
+          const newWidth = Math.max(
+            e.clientX - box.getBoundingClientRect().left,
+            50
+          );
 
+          const newHeight = newWidth / (box.clientWidth / box.clientHeight);
+          const iconHeight = icon.clientHeight;
+          const iconWidth = icon.clientWidth;
           setCenteredY(false);
           setCenteredX(false);
-          if (newWidth > 0 && newHeight > 0) {
-            box.style.width = `${newWidth}px`;
-            box.style.height = `${newHeight}px`;
-            icon.style.left = `${newWidth + coords.current.lastX - 10}px`;
-            icon.style.top = `${newHeight + coords.current.lastY - 10}px`;
-          }
+          box.style.width = `${newWidth}px`;
+          box.style.height = `${newHeight}px`;
+          icon.style.left = `${
+            newWidth - iconWidth - 3 + coords.current.lastX
+          }px`;
+          icon.style.top = `${
+            newHeight - iconHeight + coords.current.lastY - 3
+          }px`;
         }
       }
     };
@@ -240,8 +254,10 @@ function App() {
 
     // Set the new position for the box
     box.style.left = `${newLeft}px`;
-    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
+    icon.style.left = `${newLeft + box.clientWidth - 13}px`;
     setCenteredX(true);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   const handleClickLeft = () => {
@@ -258,9 +274,11 @@ function App() {
     box.style.top = `${newTop}px`;
 
     // Set the position for the icon in the bottom right corner of the box
-    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
-    icon.style.top = `${newTop + box.clientHeight - 10}px`; // Update centered state
+    icon.style.left = `${newLeft + box.clientWidth - 13}px`;
+    icon.style.top = `${newTop + box.clientHeight - 13}px`; // Update centered state
     setCenteredX(false);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   const handleClickRight = () => {
@@ -277,9 +295,11 @@ function App() {
     box.style.top = `${newTop}px`;
 
     // Set the position for the icon in the bottom right corner of the box
-    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
-    icon.style.top = `${newTop + box.clientHeight - 10}px`; // Update centered state
+    icon.style.left = `${newLeft + box.clientWidth - 13}px`;
+    icon.style.top = `${newTop + box.clientHeight - 13}px`; // Update centered state
     setCenteredX(false);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   const handleClickTop = () => {
@@ -296,9 +316,11 @@ function App() {
     box.style.top = `${newTop}px`;
 
     // Set the position for the icon in the bottom right corner of the box
-    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
-    icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    icon.style.left = `${newLeft + box.clientWidth - 13}px`;
+    icon.style.top = `${newTop + box.clientHeight - 13}px`;
     setCenteredY(false);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   const handleClickMiddle = () => {
@@ -315,9 +337,11 @@ function App() {
     box.style.top = `${newTop}px`;
 
     // Set the position for the icon in the bottom right corner of the box
-    // icon.style.left = `${newLeft + box.clientWidth - 10}px`;
-    icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    // icon.style.left = `${newLeft + box.clientWidth - 13}px`;
+    icon.style.top = `${newTop + box.clientHeight - 13}px`;
     setCenteredY(true);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   const handleClickBottom = () => {
@@ -334,9 +358,11 @@ function App() {
     box.style.top = `${newTop}px`;
 
     // Set the position for the icon in the bottom right corner of the box
-    icon.style.left = `${newLeft + box.clientWidth - 10}px`;
-    icon.style.top = `${newTop + box.clientHeight - 10}px`;
+    icon.style.left = `${newLeft + box.clientWidth - 13}px`;
+    icon.style.top = `${newTop + box.clientHeight - 13}px`;
     setCenteredY(false);
+    coords.current.lastX = box.offsetLeft;
+    coords.current.lastY = box.offsetTop;
   };
 
   return (
@@ -363,6 +389,9 @@ function App() {
         </div>
       </div>
       <div>
+        <input type="file" onChange={handleImageUpload} accept="image/*" />
+      </div>
+      <div>
         <button onClick={handleClickCenter}>Center</button>
         <button onClick={handleClickLeft}>Left</button>
         <button onClick={handleClickRight}>Right</button>
@@ -370,7 +399,6 @@ function App() {
         <button onClick={handleClickMiddle}>Middle</button>
         <button onClick={handleClickBottom}>Bottom</button>
       </div>
-      <input type="file" onChange={handleImageUpload} accept="image/*" />
       <button
         style={{ width: "150px", display: "inline-block" }}
         onClick={handleConfirmClick}

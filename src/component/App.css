@@ -76,11 +76,12 @@ main {
   width: 10px;
   height:10px;
   background-color: none;
-  border: 3px solid black;
+  border-bottom: 3px solid black;
+  border-right: 3px solid black;
   position:absolute;
-  top:130px;
-  left:130px;
-  border-radius: 10px;
+  top:127px;
+  left:127px;
+  /* border-radius: 10px; */
   cursor: nw-resize;
   
 }
