@@ -6,11 +6,15 @@ function App() {
   const containerRef = useRef(null);
   const isClicked = useRef(false);
   const isClickedIcon = useRef(false);
+  const divParentRef = useRef(null);
+  const horizontalLineRef = useRef(null);
+  const verticalLineRef = useRef(null);
   const iconRef = useRef(null);
   const [userImage, setUserImage] = useState(null);
   const [centeredX, setCenteredX] = useState(false);
   const [centeredY, setCenteredY] = useState(false);
   const [fileExist, setFileExist] = useState(false);
+  const [originalRatio, setOriginalRatio] = useState(0);
   const coords = useRef({
     startX: 0,
     startY: 0,
@@ -18,11 +22,22 @@ function App() {
     lastY: 0,
   });
   const handleImageUpload = (event) => {
+    console.log("HANDLEUNAGEUPLOAD)");
+    event.preventDefault();
+    event.stopPropagation();
+    coords.current = {
+      startX: 0,
+      startY: 0,
+      lastX: 0,
+      lastY: 0,
+    };
+    console.log(coords);
     const file = event.target.files[0];
     const reader = new FileReader();
     setFileExist(true);
-
+    console.log("HANDLEIMAGEUPLOAD");
     reader.onload = (e) => {
+      console.log("READING");
       setUserImage(e.target.result);
       const box = boxRef.current;
       const icon = iconRef.current;
@@ -30,18 +45,24 @@ function App() {
       const img = new Image();
       img.src = e.target.result;
       img.onload = () => {
+        console.log("IMAGEONLOAD");
         const aspectRatio = img.width / img.height;
+        console.log(img.width, img.height, aspectRatio);
 
         // Set the backgroundImage and adjust the width and height of the box
         box.style.backgroundImage = `url(${e.target.result})`;
         box.style.width = "100px"; // Set your desired width
         box.style.height = `${100 / aspectRatio}px`; // Adjust the height based on the aspect ratio
+        box.style.left = "0px";
+        box.style.top = "0px";
+
+        setOriginalRatio(aspectRatio);
 
         // icon.style.left = `${100 - 10}px`;
         // icon.style.top = `${100 / aspectRatio - 10}px`; // Adjust the height based on the aspect ratio
         // Set the initial position for the icon in the bottom right corner of the box
-        icon.style.left = `${box.clientWidth - 12}px`;
-        icon.style.top = `${box.clientHeight - 12}px`;
+        icon.style.left = `${box.clientWidth - 13}px`;
+        icon.style.top = `${box.clientHeight - 13}px`;
       };
     };
 
@@ -49,25 +70,66 @@ function App() {
   };
 
   useEffect(() => {
+    const handleDocumentClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const divParent = divParentRef.current;
+      const container = containerRef.current;
+      const icon = iconRef.current;
+      const horizontalLine = horizontalLineRef.current;
+      const verticalLine = verticalLineRef.current;
+
+      // Check if the click is outside the divParent
+      if (divParent.contains(e.target)) {
+        container.style.border = "1px solid transparent";
+        icon.style.visibility = "hidden";
+        if (horizontalLine) {
+          horizontalLine.style.visibility = "hidden";
+        }
+        if (verticalLine) {
+          verticalLine.style.visibility = "hidden";
+        }
+      }
+    };
+    const handleDocumentClick2 = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const divParent = divParentRef.current;
+      const container = containerRef.current;
+      const icon = iconRef.current;
+
+      const horizontalLine = horizontalLineRef.current;
+      const verticalLine = verticalLineRef.current;
+
+      // Check if the click is outside the divParent
+      if (divParent.contains(e.target)) {
+        // Update the container border to 0px
+        container.style.border = "1px solid black";
+        icon.style.visibility = "visible";
+        if (horizontalLine) {
+          horizontalLine.style.visibility = "visible";
+        }
+        if (verticalLine) {
+          verticalLine.style.visibility = "visible";
+        }
+      }
+    };
     if (!boxRef.current || !containerRef.current || !iconRef.current) return;
 
     const box = boxRef.current;
     const container = containerRef.current;
     const icon = iconRef.current;
-
+    const divParent = divParentRef.current;
     const onMouseDown = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log("OnMouseDown");
       isClicked.current = true;
       coords.current.startX = e.clientX;
       coords.current.startY = e.clientY;
     };
-    console.log(centeredX);
     const onMouseUp = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      console.log("OnMouseUp");
       isClicked.current = false;
       coords.current.lastX = box.offsetLeft;
       coords.current.lastY = box.offsetTop;
@@ -178,14 +240,10 @@ function App() {
       e.stopPropagation();
       e.preventDefault();
       isClickedIcon.current = true;
-      console.log("isClicked", isClicked.current);
-      console.log("isClickedIcon", isClickedIcon.current);
     };
     const onMouseUpIcon = (e) => {
       e.stopPropagation();
       isClickedIcon.current = false;
-      console.log("isClicked", isClicked.current);
-      console.log("isClickedIcon", isClickedIcon.current);
     };
     box.addEventListener("mousedown", onMouseDown);
     box.addEventListener("mouseup", onMouseUp);
@@ -193,13 +251,17 @@ function App() {
     icon.addEventListener("mousedown", onMouseDownIcon);
     icon.addEventListener("mouseup", onMouseUpIcon);
     document.addEventListener("mouseup", onMouseUp);
+    divParent.addEventListener("click", handleDocumentClick);
+    container.addEventListener("click", handleDocumentClick2);
     const cleanup = () => {
       box.removeEventListener("mousedown", onMouseDown);
       box.removeEventListener("mouseup", onMouseUp);
       container.removeEventListener("mousemove", onMouseMove);
       icon.removeEventListener("mousedown", onMouseDownIcon);
       icon.removeEventListener("mouseup", onMouseUpIcon);
-      document.addEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mouseup", onMouseUp);
+      divParent.removeEventListener("click", handleDocumentClick);
+      container.removeEventListener("click", handleDocumentClick2);
     };
     return cleanup;
   }, []);
@@ -261,7 +323,6 @@ function App() {
   };
 
   const handleClickLeft = () => {
-    const container = document.querySelector(".container");
     const box = document.querySelector(".box");
     const icon = iconRef.current;
 
@@ -303,7 +364,6 @@ function App() {
   };
 
   const handleClickTop = () => {
-    const container = document.querySelector(".container");
     const box = document.querySelector(".box");
     const icon = iconRef.current;
 
@@ -329,7 +389,6 @@ function App() {
     const icon = iconRef.current;
 
     // Calculate the new position for the box and icon
-    const newLeft = container.clientWidth / 2 - box.clientWidth / 2;
     const newTop = container.clientHeight / 2 - box.clientHeight / 2;
 
     // Set the new position for the box
@@ -367,7 +426,7 @@ function App() {
 
   return (
     <main>
-      <div className="divParent" id="divParent">
+      <div className="divParent" ref={divParentRef}>
         <div ref={containerRef} className="container">
           <div
             ref={boxRef}
@@ -384,8 +443,12 @@ function App() {
             style={{ display: fileExist ? "block" : "none" }}
             ref={iconRef}
           />
-          {centeredX && <div className="center-line vertical" />}
-          {centeredY && <div className="center-line horizontal" />}
+          {centeredX && (
+            <div ref={verticalLineRef} className="center-line vertical" />
+          )}
+          {centeredY && (
+            <div ref={horizontalLineRef} className="center-line horizontal" />
+          )}
         </div>
       </div>
       <div>
