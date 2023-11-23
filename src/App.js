@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import ImageUploadArea from "./ImageUploadArea";
 import PracRef from "./component/PracRef.js";
-import App_ver3 from "./component/App_ver3.js";
+import DesignModule from "./component/designModule";
+import shirt from "./asset/shirt.png";
 function App() {
   return (
     <>
-      <div> TEST</div>
-      <PracRef height={30} />
-      <PracRef height={50} />
-      <App_ver3 />
-      <App_ver3 />
+      <DesignModule
+        backgroundImage={shirt}
+        canvasTop={0}
+        canvasLeft={0}
+        canvasWidth={40}
+        canvasHeight={50}
+        coef={4}
+      />
     </>
   );
 }
