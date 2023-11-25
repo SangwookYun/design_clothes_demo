@@ -16,6 +16,7 @@ const DesignModule = ({
   const verticalLineRef = useRef(null);
 
   // component state
+  const defaultWidth = 30;
   const [userImage, setUserImage] = useState(null);
   const [centeredX, setCenteredX] = useState(false);
   const [centeredY, setCenteredY] = useState(false);
@@ -42,6 +43,7 @@ const DesignModule = ({
     }
     const reader = new FileReader();
     setFileExist(true);
+    setSelectedOpt("");
     reader.onload = (e) => {
       setUserImage(e.target.result);
       const box = boxRef.current;
@@ -50,13 +52,9 @@ const DesignModule = ({
       img.src = e.target.result;
       img.onload = () => {
         const aspectRatio = img.width / img.height;
-        const originWidth = 30 * coef;
-        console.log(img.width, img.height, aspectRatio);
-        console.log(originWidth, originWidth / aspectRatio);
+        const originWidth = defaultWidth * coef;
         // Set the backgroundImage and adjust the width and height of the box
         box.style.backgroundImage = `url(${e.target.result})`;
-
-        // setWidth(30 * coef);
 
         setWidth(originWidth);
         setHeight(originWidth / aspectRatio);
@@ -131,9 +129,10 @@ const DesignModule = ({
   }, []);
 
   useEffect(() => {}, [top, left, width, height, userImage]);
+
   const handleConfirmClick = () => {
     const mergedCanvas = document.getElementById("mergedCanvas");
-    const designPanel = document.getElementById("designPanel");
+    const designPanel = document.querySelector(".designPanel");
     mergedCanvas.width = designPanel.offsetWidth;
     mergedCanvas.height = designPanel.offsetHeight;
     const ctx = mergedCanvas.getContext("2d");
@@ -230,7 +229,6 @@ const DesignModule = ({
     const box = document.querySelector(".box");
 
     // Calculate the new position for the box and icon
-    console.log(box.clientHeight / 2);
     const newTop = canvasArea.clientHeight / 2 - box.clientHeight / 2;
 
     // Set the new position for the box
@@ -257,27 +255,25 @@ const DesignModule = ({
     // Set the position for the icon in the bottom right corner of the box
     setCenteredY(false);
   };
-  const handleSizeChange = (width) => {
-    const box = boxRef.current;
-    const canvasArea = canavasAreaRef.current;
-    console.log(width);
-    const newWidth = width * 3.75;
-    const newHeight = width * (originalRatio / 100) * 3.75;
 
-    setWidth(newWidth);
-    setHeight(newHeight);
-
-    const newLeft = canvasArea.clientWidth / 2 - newWidth / 2;
-    const newTop = canvasArea.clientHeight / 2 - newHeight / 2;
-    setLeft(newLeft);
-    setTop(newTop);
-    // Set the new position for the box
-    setCenteredX(true);
-    setCenteredY(true);
-  };
   const sizeOptions = [15, 20, 25, 30, 35, 40];
   const handleSelectChange = (event) => {
-    setSelectedOpt(event.target.value);
+    const canvasArea = canavasAreaRef.current;
+    const selectedValue = event.target.value;
+
+    const calculatedWidth = selectedValue * coef;
+    const calculatedHeight = selectedValue * coef * (originalRatio / 10000);
+
+    const newLeft = canvasArea.clientWidth / 2 - calculatedWidth / 2;
+
+    const newTop =
+      canvasArea.clientHeight / 2 - calculatedWidth / (100 / originalRatio) / 2;
+
+    setSelectedOpt(selectedValue);
+    setWidth(calculatedWidth);
+    setHeight(calculatedHeight * 100);
+    setLeft(newLeft);
+    setTop(newTop);
   };
   return (
     <>
@@ -287,13 +283,22 @@ const DesignModule = ({
           style={{ backgroundImage: `url(${backgroundImage})` }}
           ref={designPanelRef}
         >
-          <div ref={canavasAreaRef} className='canvasArea'>
+          <div
+            ref={canavasAreaRef}
+            className='canvasArea'
+            style={{
+              width: canvasWidth * coef,
+              height: canvasHeight * coef,
+              top: canvasTop,
+              left: canvasLeft,
+            }}
+          >
             <div
               ref={boxRef}
               className='box'
               style={{
                 backgroundImage: `url(${userImage})`,
-                backgroundSize: "contain",
+                backgroundSize: "cover",
                 backgroundRepeat: "no-repeat",
                 display: fileExist || centeredX || centeredY ? "block" : "none",
                 width: width,
@@ -313,57 +318,83 @@ const DesignModule = ({
         </div>
         <div className='controllerPanel'>
           <div className='controller'>
-            <div className='subControllerGroup'>
+            <div className='subControllerGroup flexColumn'>
+              <label className='label'>Step1. Upload an Img file </label>
               <input
                 type='file'
                 onChange={handleImageUpload}
+                style={{ margin: "auto", width: "80%" }}
                 accept='image/*'
               />
             </div>
-            <div className='subControllerGroup'>
-              <button disabled={!fileExist} onClick={handleClickLeft}>
-                Left
-              </button>
-              <button disabled={!fileExist} onClick={handleClickCenter}>
-                Center
-              </button>
-              <button disabled={!fileExist} onClick={handleClickRight}>
-                Right
-              </button>
-              <button disabled={!fileExist} onClick={handleClickTop}>
-                Top
-              </button>
-              <button disabled={!fileExist} onClick={handleClickMiddle}>
-                Middle
-              </button>
-              <button disabled={!fileExist} onClick={handleClickBottom}>
-                Bottom
-              </button>
-            </div>
-            <div className='subControllerGroup'>
-              <label>Select size of the Width : </label>
+            <div className='subControllerGroup flexColumn'>
+              <label className='label'>Step2. Select size of the Width</label>
               <select
                 disabled={!fileExist}
                 value={selectedOpt}
                 onChange={handleSelectChange}
+                style={{ width: "80%", margin: "auto" }}
               >
                 <option value=''>Select...</option>
-                {sizeOptions.map((opt, idx) => (
-                  <option key={idx} value={opt}>
-                    {opt}
-                  </option>
-                ))}
+                {sizeOptions.map((opt, idx) => {
+                  const calculatedValue = (opt * originalRatio) / 100;
+                  if (calculatedValue > 50) {
+                    // If calculated value is greater than 50, disable or remove the option
+                    return null; // or you can disable it by adding the 'disabled' attribute
+                  }
+
+                  return (
+                    <option key={idx} value={opt}>
+                      {opt}
+                    </option>
+                  );
+                })}
               </select>
-              {fileExist && selectedOpt !== 0 && (
+              {fileExist && selectedOpt !== "" ? (
                 <p>
                   The image size is {selectedOpt}cm X
                   {((selectedOpt * originalRatio) / 100).toFixed(0)}cm
                 </p>
+              ) : (
+                <p></p>
               )}
             </div>
-            <div className='subControllerGroup'>
+            <div className='subControllerGroup flexColumn'>
+              <label className='label'>
+                Step3. Select horizontal alignment
+              </label>
+              <div className='flexRow buttonGroup'>
+                <button disabled={!fileExist} onClick={handleClickLeft}>
+                  Left
+                </button>
+                <button disabled={!fileExist} onClick={handleClickCenter}>
+                  Center
+                </button>
+                <button disabled={!fileExist} onClick={handleClickRight}>
+                  Right
+                </button>
+              </div>
+            </div>
+            <div className='subControllerGroup flexColumn'>
+              <label className='label'>Step4. Select vertical alignment</label>
+              <div className='flexRow buttonGroup'>
+                <button disabled={!fileExist} onClick={handleClickTop}>
+                  Top
+                </button>
+                <button disabled={!fileExist} onClick={handleClickMiddle}>
+                  Middle
+                </button>
+                <button disabled={!fileExist} onClick={handleClickBottom}>
+                  Bottom
+                </button>
+              </div>
+            </div>
+
+            <div className='subControllerGroup' style={{ textAlign: "center" }}>
               <button
-                style={{ width: "150px", display: "inline-block" }}
+                style={{
+                  width: "80%",
+                }}
                 onClick={handleConfirmClick}
                 disabled={!fileExist}
               >

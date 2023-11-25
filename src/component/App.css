@@ -4,18 +4,20 @@
   border: 1px solid black;
   width: 60%;
   margin: auto;
+  min-width: 800px;
 }
 .designPanel {
   margin: 10px;
-  width: 400px;
+  width: 200px;
   height: 500px;
   background-repeat: no-repeat;
-  background-size: auto;
+  background-size: 100%;
   border: 2px solid #333;
-  flex: 1;
+  background-color: rgb(246, 246, 246);
+  flex: 3;
 }
 .controllerPanel {
-  flex: 1;
+  flex: 2;
   margin: 10px;
   border: 2px solid #333;
 }
@@ -23,16 +25,26 @@
   padding: 10px;
 }
 .subControllerGroup {
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid lightgray;
+  padding-bottom: 15px;
+}
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+.flexRow {
+  display: flex;
+  flex-direction: row;
 }
 .canvasArea {
   border: 1px solid black;
-  width: 160px;
-  height: 200px;
+  /* width: 160px;
+  height: 200px; */
   overflow: hidden;
   position: relative;
-  top: 90px;
-  left: 155px;
+  /* top: 90px;
+  left: 155px; */
   padding: 0;
 }
 .box {
@@ -61,4 +73,11 @@
   left: 0%;
   width: 100%;
   border: 1px dashed red;
+}
+
+.label {
+  margin-bottom: 15px;
+}
+.buttonGroup {
+  justify-content: center;
 }
