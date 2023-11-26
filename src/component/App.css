@@ -1,97 +1,59 @@
-.app {
+.container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f0f0f0; /* Add your preferred background color */
-  flex-direction: column;
+  flex-direction: row;
+  border: 1px solid black;
+  width: 60%;
+  margin: auto;
+  min-width: 800px;
 }
-.divParent {
-  background-image: url('./asset/shirt.png');
-  margin:100px;
-
-  width: 500px;
+.designPanel {
+  margin: 10px;
+  width: 200px;
   height: 500px;
   background-repeat: no-repeat;
-  background-size: auto;
-  /* position: relative; */
+  background-size: 100%;
+  border: 2px solid #333;
+  background-color: rgb(246, 246, 246);
+  flex: 3;
+}
+.controllerPanel {
+  flex: 2;
+  margin: 10px;
   border: 2px solid #333;
 }
-
-/* img {
-  max-width: 100%;
-  height: auto;
-} */
-.upload-area {
-  border: 2px dashed #333;
-  position:absolute;
-  text-align: center;
-  background-color: #f9f9f9;
-  margin-top: 20px;
-  width : 150px;
-  height: 150px;
-  /* top:70px;
-  left:156px; */
-  background-color: transparent;
-}
-
-.uploaded-image-container {
-  border: 2px solid #333;
+.controller {
   padding: 10px;
-  margin-top: 10px;
 }
-
-.uploaded-image { 
-  width: 45%;
-  height:60%;
-  border: 2px solid red;
+.subControllerGroup {
+  margin-bottom: 15px;
+  border-bottom: 1px solid lightgray;
+  padding-bottom: 15px;
 }
-
-main {
-  display: grid;
-  /* place-items:center; */
-  height: 100vh;
-  width:100vw;
+.flexColumn {
+  display: flex;
+  flex-direction: column;
 }
-.container {
+.flexRow {
+  display: flex;
+  flex-direction: row;
+}
+.canvasArea {
   border: 1px solid black;
-  width: 150px;
-  height: 150px;
-  overflow:hidden;
-  position:relative;
-  top:100px;
-  left:155px;
-  padding:0;
+  /* width: 160px;
+  height: 200px; */
+  overflow: hidden;
+  position: relative;
+  /* top: 90px;
+  left: 155px; */
+  padding: 0;
 }
 .box {
-  position:absolute;
-  top:0;
-  left:0;
-  width:140px;
-  height:140px;
-  cursor:move;
-  
-}
-.icon {
-  width: 10px;
-  height:10px;
-  background-color: none;
-  border-bottom: 3px solid black;
-  border-right: 3px solid black;
-  position:absolute;
-  top:127px;
-  left:127px;
-  /* border-radius: 10px; */
-  cursor: nw-resize;
-  
-}
-.center-lines {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  width: 140px;
+  height: 140px;
+  cursor: move;
 }
 
 .center-line {
@@ -111,4 +73,11 @@ main {
   left: 0%;
   width: 100%;
   border: 1px dashed red;
+}
+
+.label {
+  margin-bottom: 15px;
+}
+.buttonGroup {
+  justify-content: center;
 }
